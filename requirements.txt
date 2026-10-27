@@ -1,0 +1,2 @@
+# Minimal requirements for Python web service runtime
+# Standard library http.server is used by serve.py
