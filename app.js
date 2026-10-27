@@ -163,6 +163,10 @@
       ml: {
         title: 'Machine Learning Risk Analysis',
         desc: 'Logistic Regression vs Random Forest tournament, confusion matrix, and live simulator'
+      },
+      powerbi: {
+        title: 'Power BI Data Model & DAX Integration',
+        desc: 'Relational star schema design, DAX measures repository, and embedded BI report viewer'
       }
     };
 
@@ -292,6 +296,9 @@
         break;
       case 'ml':
         renderMLPage();
+        break;
+      case 'powerbi':
+        renderPowerBIPage();
         break;
     }
   }
@@ -1918,6 +1925,64 @@
     tbody.querySelectorAll('.action-view-txn').forEach(el => {
       el.addEventListener('click', () => showTxnModal(el.getAttribute('data-id')));
     });
+  }
+
+  // =========================================================================
+  // 7TH PAGE: POWER BI ARCHITECTURE & EMBED VIEWER
+  // =========================================================================
+  function renderPowerBIPage() {
+    const btnLoad = document.getElementById('btn-load-powerbi');
+    const inputUrl = document.getElementById('input-powerbi-url');
+    const container = document.getElementById('powerbi-embed-container');
+    const btnSample = document.getElementById('btn-powerbi-sample');
+
+    if (btnLoad && !btnLoad._hasInit) {
+      btnLoad._hasInit = true;
+      btnLoad.addEventListener('click', () => {
+        const url = (inputUrl ? inputUrl.value : '').trim();
+        if (!url) {
+          alert('Please enter a valid Power BI Publish-to-Web link.');
+          return;
+        }
+        if (container) {
+          container.innerHTML = `
+            <iframe title="Power BI Payment Failure Report" width="100%" height="600" 
+              src="${url}" frameborder="0" allowFullScreen="true" 
+              style="border: none; border-radius: 8px;"></iframe>
+          `;
+        }
+      });
+    }
+
+    if (btnSample && !btnSample._hasInit) {
+      btnSample._hasInit = true;
+      btnSample.addEventListener('click', () => {
+        const txns = getFilteredTransactions();
+        const total = txns.length;
+        const failed = txns.filter(t => t.status === 'FAILED').length;
+        const recovered = txns.filter(t => t.is_recovered).length;
+        const rate = total ? ((failed / total) * 100).toFixed(2) : '0.00';
+        
+        if (container) {
+          container.innerHTML = `
+            <div style="width:100%; text-align:left; background:var(--bg-secondary); padding:20px; border-radius:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; border-bottom:1px solid var(--border-subtle); padding-bottom:10px;">
+                <h4 style="color:#fff; margin:0;">📊 Star Schema Live Data View (${total.toLocaleString()} rows)</h4>
+                <span class="badge badge-success">SQL Views Connected</span>
+              </div>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin-bottom:15px;">
+                <div style="background:var(--bg-card); padding:10px; border-radius:6px;"><div style="font-size:11px; color:var(--text-muted);">DAX [Failure Rate %]</div><div style="font-size:18px; font-weight:700; color:var(--danger-light);">${rate}%</div></div>
+                <div style="background:var(--bg-card); padding:10px; border-radius:6px;"><div style="font-size:11px; color:var(--text-muted);">DAX [Total Attempted]</div><div style="font-size:18px; font-weight:700; color:#fff;">${total.toLocaleString()}</div></div>
+                <div style="background:var(--bg-card); padding:10px; border-radius:6px;"><div style="font-size:11px; color:var(--text-muted);">DAX [Recovered Count]</div><div style="font-size:18px; font-weight:700; color:var(--success-light);">${recovered.toLocaleString()}</div></div>
+              </div>
+              <p style="font-size:12px; color:var(--text-muted); margin:0;">
+                💡 <em>Fact_Transactions</em> is dynamically filtered by the global slicers (Gateway, Method, Timeline) matching the Power BI Cross-Filtering engine.
+              </p>
+            </div>
+          `;
+        }
+      });
+    }
   }
 
   // =========================================================================

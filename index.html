@@ -79,6 +79,14 @@
           <span>ML Risk Analysis</span>
           <span class="nav-badge" style="background: linear-gradient(135deg, #6366F1, #06B6D4); color:#fff;">Live Sim</span>
         </a>
+
+        <div class="nav-label" style="margin-top: 14px;">Business Intelligence</div>
+
+        <a class="nav-item" data-page="powerbi" id="nav-powerbi">
+          <span class="nav-icon">📈</span>
+          <span>Power BI Model</span>
+          <span class="nav-badge" style="background: rgba(245, 158, 11, 0.2); color:#FBBF24;">DAX & Schema</span>
+        </a>
       </nav>
 
       <div class="sidebar-footer">
@@ -1120,6 +1128,124 @@
               </table>
             </div>
             <div class="table-pagination" id="pagination-predictions"></div>
+          </div>
+        </section>
+
+        <!-- ================================================================= -->
+        <!-- 7TH PAGE: POWER BI ARCHITECTURE & EMBED VIEWER                   -->
+        <!-- ================================================================= -->
+        <section id="page-powerbi" class="dashboard-page">
+          <!-- Power BI Architecture Headline -->
+          <div class="panel-card" style="margin-bottom: 24px; background: linear-gradient(135deg, rgba(245,158,11,0.06), rgba(99,102,241,0.06)); border: 1px solid rgba(245,158,11,0.25);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+              <div>
+                <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+                  <span style="font-size:24px;">📊</span>
+                  <h3 style="font-family:var(--font-display); font-size: 20px; font-weight:800; color:#fff;">Power BI Data Model & DAX Integration</h3>
+                  <span class="badge" style="background: rgba(245,158,11,0.2); color:#FBBF24;">SQL Star Schema</span>
+                </div>
+                <p style="font-size: 13px; color: var(--text-muted); max-width: 800px; line-height: 1.5;">
+                  Engineered directly from <code>digital_payment_analysis_full (1).sql</code> (Section Part 4-6). All metrics, slicers, and scorecards in this web application map 1-to-1 with Power BI fact and dimension tables, star schema joins, and DAX measures.
+                </p>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <a href="/api/powerbi" target="_blank" class="btn-action-primary" style="text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                  Export Power BI Schema JSON
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Star Schema & Architecture Grid -->
+          <div class="grid-2" style="margin-bottom: 24px;">
+            <!-- Schema Breakdown -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <div class="panel-title">Power BI Relational Star Schema</div>
+                <span class="panel-subtitle">1 Fact Table joined with 5 Dimension Tables</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:12px; margin-top:10px;">
+                <div style="padding:12px; background:var(--bg-secondary); border-radius:8px; border-left:4px solid var(--primary-light);">
+                  <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:4px;">⭐ Fact_Transactions (5,000 Records)</div>
+                  <div style="font-size:12px; color:var(--text-muted);">
+                    <code>transaction_id</code> [PK], <code>customer_id</code> [FK], <code>gateway_id</code> [FK], <code>method_id</code> [FK], <code>amount</code>, <code>status</code>, <code>processing_seconds</code>, <code>is_recovered</code>, <code>recovered_amount</code>
+                  </div>
+                </div>
+
+                <div style="padding:12px; background:var(--bg-secondary); border-radius:8px; border-left:4px solid var(--accent-cyan);">
+                  <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:4px;">🔹 Dim_Gateway (3 Gateways)</div>
+                  <div style="font-size:12px; color:var(--text-muted);">
+                    <code>gateway_name</code> (Razorpay, Cashfree, PayU), SLA Target (3s), Payout Cycle (T+2), Fee % (2.0%)
+                  </div>
+                </div>
+
+                <div style="padding:12px; background:var(--bg-secondary); border-radius:8px; border-left:4px solid var(--accent-purple);">
+                  <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:4px;">🔹 Dim_PaymentMethod (5 Methods)</div>
+                  <div style="font-size:12px; color:var(--text-muted);">
+                    <code>payment_method</code> (GPay, Credit Card, Debit Card, NetBanking, Wallet), Channel Type (Fast/Instant vs Batch)
+                  </div>
+                </div>
+
+                <div style="padding:12px; background:var(--bg-secondary); border-radius:8px; border-left:4px solid #10B981;">
+                  <div style="font-weight:700; color:#fff; font-size:14px; margin-bottom:4px;">🔹 Dim_Date & Dim_Customer</div>
+                  <div style="font-size:12px; color:var(--text-muted);">
+                    Date Hierarchy (Month, Week, Day, Hour, Peak Window) & Customer Profile (Rolling historical failure rate)
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- DAX Measures Library -->
+            <div class="panel-card">
+              <div class="panel-header">
+                <div class="panel-title">Production DAX Measures Library</div>
+                <span class="panel-subtitle">Used across headline KPIs & drill-through matrices</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">
+                <div style="padding:10px; background:rgba(0,0,0,0.3); border-radius:6px; font-family:var(--font-mono); font-size:12px;">
+                  <span style="color:var(--accent-cyan); font-weight:700;">[Failure Rate %]</span> = <br>
+                  <span style="color:#A78BFA;">DIVIDE</span>(<span style="color:#FBBF24;">CALCULATE</span>(COUNTROWS(Fact_Transactions), Fact_Transactions[status] = "FAILED"), COUNTROWS(Fact_Transactions), 0)
+                </div>
+                <div style="padding:10px; background:rgba(0,0,0,0.3); border-radius:6px; font-family:var(--font-mono); font-size:12px;">
+                  <span style="color:var(--accent-cyan); font-weight:700;">[Retry Recovery Volume]</span> = <br>
+                  <span style="color:#A78BFA;">CALCULATE</span>(SUM(Fact_Transactions[recovered_amount]), Fact_Transactions[is_recovered] = 1)
+                </div>
+                <div style="padding:10px; background:rgba(0,0,0,0.3); border-radius:6px; font-family:var(--font-mono); font-size:12px;">
+                  <span style="color:var(--accent-cyan); font-weight:700;">[Pending SLA Breach]</span> = <br>
+                  <span style="color:#A78BFA;">CALCULATE</span>(COUNTROWS(Fact_Transactions), Fact_Transactions[status] = "PENDING" && Fact_Transactions[processing_seconds] > 900)
+                </div>
+                <div style="padding:10px; background:rgba(0,0,0,0.3); border-radius:6px; font-family:var(--font-mono); font-size:12px;">
+                  <span style="color:var(--accent-cyan); font-weight:700;">[Net Settlement Gap]</span> = <br>
+                  <span style="color:#A78BFA;">SUM</span>(vw_settlement_gap[gap_amount])
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Power BI Live Embed Container -->
+          <div class="table-panel">
+            <div class="table-toolbar">
+              <div>
+                <div class="panel-title">Power BI Interactive Report Embed</div>
+                <div class="panel-subtitle">Embed your Power BI Service Publish-to-Web URL directly into the live dashboard</div>
+              </div>
+              <div style="display:flex; gap:10px; align-items:center;">
+                <input type="text" id="input-powerbi-url" class="search-input" style="width:340px;" placeholder="Paste Power BI Embed / Publish URL...">
+                <button class="btn-action-primary" id="btn-load-powerbi">Load Report</button>
+              </div>
+            </div>
+
+            <div id="powerbi-embed-container" style="min-height: 480px; background: rgba(15, 23, 42, 0.6); border-radius: 8px; border: 1px dashed var(--border-subtle); display:flex; flex-direction:column; align-items:center; justify-content:center; padding: 30px; text-align:center;">
+              <div style="font-size: 40px; margin-bottom: 12px;">📊</div>
+              <h4 style="color:#fff; font-size: 16px; margin-bottom: 8px;">Power BI Report Ready for Embedding</h4>
+              <p style="color:var(--text-muted); font-size: 13px; max-width: 580px; margin-bottom: 18px; line-height:1.5;">
+                To view a live embedded Power BI report, publish your Power BI Desktop file to Power BI Service, copy the <em>Publish to Web</em> public link, and paste it into the box above.
+              </p>
+              <div style="display:flex; gap:12px;">
+                <button class="btn-reset" id="btn-powerbi-sample" style="padding:8px 16px;">View Data Model Scorecard</button>
+              </div>
+            </div>
           </div>
         </section>
 
