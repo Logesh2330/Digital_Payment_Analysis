@@ -126,6 +126,24 @@
     setupGlobalFilters();
     setupEventListeners();
 
+    // Ping live Python backend service
+    fetch('/api/health')
+      .then(r => r.ok ? r.json() : null)
+      .then(health => {
+        if (health && health.status === 'healthy') {
+          const dot = document.getElementById('api-status-dot');
+          const badge = document.getElementById('api-status-badge');
+          const txt = document.getElementById('api-status-text');
+          if (dot) dot.style.background = '#10B981';
+          if (badge) { badge.textContent = 'ONLINE'; badge.style.color = '#10B981'; }
+          if (txt) txt.textContent = `Python Web API v${health.version || '2.2'}`;
+        }
+      })
+      .catch(() => {
+        const badge = document.getElementById('api-status-badge');
+        if (badge) { badge.textContent = 'CLIENT'; badge.style.color = 'var(--text-muted)'; }
+      });
+
     // Initial render of current page
     renderActivePage();
   }
@@ -1833,6 +1851,34 @@
     explanation.textContent = driverDesc.length 
       ? `Primary risk factors: ${driverDesc.join(', ')}.`
       : 'Transaction features are within normal operational stability limits with low historical risk.';
+
+    // Query Python ML API asynchronously to verify live model inference
+    if (window.fetch) {
+      fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: amt,
+          payment_method: method,
+          gateway_name: gateway,
+          hour: hour,
+          customer_previous_failure_rate: custHist,
+          is_weekend: day >= 5 ? 1 : 0
+        })
+      })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data && data.transaction_id) {
+          const tagTxt = document.getElementById('sim-backend-text');
+          if (tagTxt) {
+            tagTxt.textContent = `Python Service: ${data.model} | Ref: ${data.transaction_id}`;
+          }
+        }
+      })
+      .catch(() => {
+        // Silent fallback in client-only mode
+      });
+    }
   }
 
   function renderMLPredictionsTable() {

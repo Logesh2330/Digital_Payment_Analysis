@@ -1,2 +1,4 @@
-# Minimal requirements for Python web service runtime
-# Standard library http.server is used by serve.py
+# Digital Payment Analysis - Python Web Service Requirements
+# Uses Python standard library (http.server, json, math, os, sys, datetime)
+# Zero external packages needed: Guarantees 100% reliable instant build on Render
+
